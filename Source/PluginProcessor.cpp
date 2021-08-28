@@ -150,11 +150,27 @@ void SimpleDistortionAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
+
+    // Gettig parameters
+    float drive = apvts.getRawParameterValue("Drive")->load();
+    float range = apvts.getRawParameterValue("Range")->load();
+    float blend = apvts.getRawParameterValue("Blend")->load();
+    float volume = apvts.getRawParameterValue("Volume")->load();
+
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
+        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+        {
+            float cleanSignal = *channelData;
+
+            *channelData *= drive * range;
+            *channelData = (((2.f / juce::MathConstants<float>::pi) * atan(*channelData) * blend)
+                + (cleanSignal * (1.f / blend))) * 0.5f * volume;
+
+            channelData++;
+        }
     }
 }
 
@@ -199,26 +215,26 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimpleDistortionAudioProcess
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         "Drive", "Drive",
-        juce::NormalisableRange<float>(0.f, 10.f, 1.f, 1.f),
-        5.f
+        juce::NormalisableRange<float>(0.f, 1.f, 0.0001f, 1.f),
+        0.f
     ));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         "Range", "Range",
-        juce::NormalisableRange<float>(0.f, 10.f, 1.f, 1.f),
-        5.f
+        juce::NormalisableRange<float>(0.f, 3000.f, 1.f, 1.f),
+        0.f
     ));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         "Blend", "Blend",
-        juce::NormalisableRange<float>(0.f, 10.f, 1.f, 1.f),
-        5.f
+        juce::NormalisableRange<float>(0.f, 1.f, 0.0001f, 1.f),
+        0.f
     ));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         "Volume", "Volume",
-        juce::NormalisableRange<float>(0.f, 10.f, 1.f, 1.f),
-        5.f
+        juce::NormalisableRange<float>(0.f, 3.f, 0.0001f, 1.f),
+        0.f
     ));
 
     return layout;
