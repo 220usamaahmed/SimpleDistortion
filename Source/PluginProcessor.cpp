@@ -167,7 +167,8 @@ void SimpleDistortionAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
 
             *channelData *= drive * range;
             *channelData = (((2.f / juce::MathConstants<float>::pi) * atan(*channelData) * blend)
-                + (cleanSignal * (1.f / blend))) * 0.5f * volume;
+                + (cleanSignal * (1.f - blend)))
+                * volume;
 
             channelData++;
         }
@@ -182,8 +183,8 @@ bool SimpleDistortionAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* SimpleDistortionAudioProcessor::createEditor()
 {
-    // return new SimpleDistortionAudioProcessorEditor (*this);
-    return new juce::GenericAudioProcessorEditor(*this);
+    return new SimpleDistortionAudioProcessorEditor (*this);
+    // return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
@@ -216,25 +217,25 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimpleDistortionAudioProcess
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         "Drive", "Drive",
         juce::NormalisableRange<float>(0.f, 1.f, 0.0001f, 1.f),
-        0.f
+        1.f
     ));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         "Range", "Range",
         juce::NormalisableRange<float>(0.f, 3000.f, 1.f, 1.f),
-        0.f
+        1.f
     ));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         "Blend", "Blend",
         juce::NormalisableRange<float>(0.f, 1.f, 0.0001f, 1.f),
-        0.f
+        1.f
     ));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         "Volume", "Volume",
         juce::NormalisableRange<float>(0.f, 3.f, 0.0001f, 1.f),
-        0.f
+        1.f
     ));
 
     return layout;
