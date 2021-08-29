@@ -29,5 +29,15 @@ private:
     // access the processor object that created it.
     SimpleDistortionAudioProcessor& audioProcessor;
 
+    juce::Slider driveSlider;
+    juce::Slider rangeSlider;
+    juce::Slider blendSlider;
+    juce::Slider volumeSlider;
+
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> driveSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> rangeSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> blendSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> volumeSliderAttachment;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleDistortionAudioProcessorEditor)
 };
